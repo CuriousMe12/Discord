@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// Profile Model for user
+model Profile {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String    @unique
+  imageUrl  String
+  name      String
+  email     String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  servers   Server[]
+  member    Member[]
+  channels  Channel[]
+  Comment   Comment[]
+}
+
+// Server / channel scehma for app
+model Server {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  imageUrl    String
+
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  profileId String    @db.ObjectId
+  Profile   Profile   @relation(fields: [profileId], references: [id])
+  member    Member[]
+  channels  Channel[]
+}
+
+enum MemberRole {
+  ADMIN
+  MODERATOR
+  GUEST
+}
+
+// Every Server will have a member & every Member will have a role
+model Member {
+  id   String     @id @default(auto()) @map("_id") @db.ObjectId
+  role MemberRole @default(GUEST)
+
+  profileId String  @db.ObjectId
+  profile   Profile @relation(fields: [profileId], references: [id])
+  serverId  String  @db.ObjectId
+  server    Server  @relation(fields: [serverId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Channel Type
+enum ChannelType {
+  AUDIO
+  VIDEO
+  TEXT
+}
+
+// Every server will have a channel of a specific type
+model Channel {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  imageUrl    String
+  type        ChannelType
+
+  Server    Server  @relation(fields: [serverId], references: [id])
+  serverId  String  @db.ObjectId
+  Profile   Profile @relation(fields: [profileId], references: [id])
+  profileId String  @db.ObjectId
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Comment   Comment[]
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // connect this to Profile
+  profileId String  @db.ObjectId
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  // Connect this with Channel
+  channelId String  @db.ObjectId
+  channel   Channel @relation(fields: [channelId], references: [id])
+}
