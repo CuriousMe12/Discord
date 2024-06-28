@@ -20,6 +20,9 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import FileUpload from "../FileUpload";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "server name is required" }),
@@ -34,11 +37,17 @@ const InitialModel = () => {
       imageUrl: "",
     },
   });
+  const router = useRouter();
 
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    try {
+      await axios.post("/api/servers", values);
+      form.reset();
+      router.refresh();
+      window.location.reload();
+    } catch (err) {}
   };
 
   return (
@@ -57,9 +66,22 @@ const InitialModel = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-8 px-6">
               <div className="flex item-center justify-center text-center">
-                Image Upload
+                <FormField
+                  control={form.control}
+                  name="imageUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <FileUpload
+                          endpoint="serverImage"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
               </div>
-
               <FormField
                 control={form.control}
                 name="name"
@@ -71,7 +93,7 @@ const InitialModel = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="bg-zinc-500/50 border-0 focus-visible:ring-0 text-black"
+                        className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black"
                         placeholder="Enter Server name"
                         {...field}
                       />
