@@ -1,17 +1,42 @@
-import { auth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import { currentProfile } from "@/lib/current-profile";
+import { v4 as uuidv4 } from "uuid";
 import { db } from "@/lib/db";
+import { ChannelType, MemberRole } from "@prisma/client";
 
-const currentProfile = async () => {
-  const { userId } = auth();
-  if (!userId) return;
+export async function POST(req: Request) {
+  try {
+    const { name } = await req.json();
+    const profile = await currentProfile();
 
-  const profile = await db.profile.findUnique({
-    where: {
-      id: userId,
-    },
-  });
+    if (!profile) {
+      return new NextResponse("unAuthorized", { status: 401 });
+    }
 
-  return profile;
-};
-
-export { currentProfile };
+    // db call
+    const newServer = await db.server.create({
+      data: {
+        name,
+        profileId: profile.id,
+        inviteCode: uuidv4(),
+        channel: {
+          create: {
+            name: "General",
+            profileId: profile.id,
+            type: ChannelType.TEXT,
+          },
+        },
+        member: {
+          create: {
+            profileId: profile.id,
+            role: MemberRole.ADMIN,
+          },
+        },
+      },
+    });
+    return NextResponse.json(newServer);
+  } catch (err) {
+    console.error(err);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}

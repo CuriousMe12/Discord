@@ -26,7 +26,6 @@ import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "server name is required" }),
-  imageUrl: z.number().min(1, { message: "server image is required" }),
 });
 
 const InitialModel = () => {
@@ -34,7 +33,6 @@ const InitialModel = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      imageUrl: "",
     },
   });
   const router = useRouter();
@@ -42,6 +40,7 @@ const InitialModel = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(form.getValues("name"));
     try {
       await axios.post("/api/servers", values);
       form.reset();
@@ -65,23 +64,6 @@ const InitialModel = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-8 px-6">
-              <div className="flex item-center justify-center text-center">
-                <FormField
-                  control={form.control}
-                  name="imageUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <FileUpload
-                          endpoint="serverImage"
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
               <FormField
                 control={form.control}
                 name="name"
@@ -95,7 +77,8 @@ const InitialModel = () => {
                         disabled={isLoading}
                         className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black"
                         placeholder="Enter Server name"
-                        {...field}
+                        value={field.value}
+                        onChange={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />
@@ -104,7 +87,7 @@ const InitialModel = () => {
               />
             </div>
             <DialogFooter className="bg-gray-100 px-4 py-5">
-              <Button disabled={isLoading} variant="primary">
+              <Button disabled={isLoading} type="submit" variant="primary">
                 Create
               </Button>
             </DialogFooter>

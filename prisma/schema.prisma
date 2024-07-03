@@ -25,23 +25,21 @@ model Profile {
   servers   Server[]
   member    Member[]
   channels  Channel[]
-  Comment   Comment[]
 }
 
 // Server / channel scehma for app
 model Server {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String?
-  imageUrl    String
-
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  inviteCode  String
+  createAt    DateTime @default(now())
+  updateAt    DateTime @updatedAt
 
   profileId String    @db.ObjectId
   Profile   Profile   @relation(fields: [profileId], references: [id])
   member    Member[]
-  channels  Channel[]
+  channel   Channel[]
 }
 
 enum MemberRole {
@@ -53,7 +51,7 @@ enum MemberRole {
 // Every Server will have a member & every Member will have a role
 model Member {
   id   String     @id @default(auto()) @map("_id") @db.ObjectId
-  role MemberRole @default(GUEST)
+  role MemberRole
 
   profileId String  @db.ObjectId
   profile   Profile @relation(fields: [profileId], references: [id])
@@ -73,33 +71,15 @@ enum ChannelType {
 
 // Every server will have a channel of a specific type
 model Channel {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String
-  imageUrl    String
-  type        ChannelType
+  id   String      @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  type ChannelType @default(TEXT)
 
   Server    Server  @relation(fields: [serverId], references: [id])
   serverId  String  @db.ObjectId
   Profile   Profile @relation(fields: [profileId], references: [id])
   profileId String  @db.ObjectId
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Comment   Comment[]
-}
-
-model Comment {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  comment   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  // connect this to Profile
-  profileId String  @db.ObjectId
-  profile   Profile @relation(fields: [profileId], references: [id])
-
-  // Connect this with Channel
-  channelId String  @db.ObjectId
-  channel   Channel @relation(fields: [channelId], references: [id])
 }
