@@ -13,7 +13,7 @@ const SeverIdLayout = async ({ children, params }: { children: ReactNode }) => {
   // fetch server
   // It has a param server Id & its members contains
   // userId
-  const server = await db.server.findFirst({
+  const server = await db.server.findUnique({
     where: {
       id: params.serverId,
       member: {
