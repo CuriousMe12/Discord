@@ -35,7 +35,11 @@ export const NavigationSidebar = async () => {
           {server.map((server) => {
             return (
               <div className="mb-4" key={server.id}>
-                <NavigationItem id={server.id} name={server.name} />
+                <NavigationItem
+                  id={server.id}
+                  name={server.name}
+                  imageUrl={server.imageUrl}
+                />
               </div>
             );
           })}

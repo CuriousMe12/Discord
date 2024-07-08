@@ -23,9 +23,11 @@ import { Button } from "../ui/button";
 import FileUpload from "../FileUpload";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "server name is required" }),
+  imageUrl: z.string().min(1, { message: "server Image is required" }),
 });
 
 const InitialModel = () => {
@@ -33,14 +35,15 @@ const InitialModel = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      imageUrl: "",
     },
   });
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
 
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(form.getValues("name"));
     try {
       await axios.post("/api/servers", values);
       form.reset();
@@ -48,6 +51,12 @@ const InitialModel = () => {
       window.location.reload();
     } catch (err) {}
   };
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <Dialog open>
@@ -64,6 +73,22 @@ const InitialModel = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-8 px-6">
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <FileUpload
+                        endpoint="serverImage"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="name"

@@ -14,7 +14,7 @@ interface Params {
 
 export async function POST(req: Request) {
   try {
-    const { name } = await req.json();
+    const { name, imageUrl } = await req.json();
     const profile = await currentProfile();
 
     if (!profile) {
@@ -27,6 +27,7 @@ export async function POST(req: Request) {
         name,
         profileId: profile.id,
         inviteCode: uuidv4(),
+        imageUrl: imageUrl,
         channel: {
           create: {
             name: "General",

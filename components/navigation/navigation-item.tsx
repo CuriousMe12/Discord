@@ -10,9 +10,10 @@ import AvatarIcon from "@/assets/AvatarIcon.jpg";
 interface NavigationItemProps {
   id: string;
   name: string;
+  imageUrl: string;
 }
 
-export const NavigationItem = ({ id, name }: NavigationItemProps) => {
+export const NavigationItem = ({ id, name, imageUrl }: NavigationItemProps) => {
   const params = useParams();
   const router = useRouter();
 
@@ -40,11 +41,7 @@ export const NavigationItem = ({ id, name }: NavigationItemProps) => {
               "bg-primary/10 text-primary rounded-[16px]"
           )}
         >
-          <Image
-            alt={name}
-            fill
-            src="https://image.spreadshirtmedia.com/image-server/v1/compositions/T347A1PA4306PT17X38Y31D1041847581W17598H17598/views/1,width=550,height=550,appearanceId=1,backgroundColor=FFFFFF,noPt=true/cartoon-characters-womens-t-shirt.jpg"
-          />
+          <Image fill alt={name} src={imageUrl} />
         </div>
       </button>
     </ActionTooltip>

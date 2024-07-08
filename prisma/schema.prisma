@@ -35,6 +35,7 @@ model Server {
   inviteCode  String   @unique
   createAt    DateTime @default(now())
   updateAt    DateTime @updatedAt
+  imageUrl  String
 
   profileId String    @db.ObjectId
   Profile   Profile   @relation(fields: [profileId], references: [id])
