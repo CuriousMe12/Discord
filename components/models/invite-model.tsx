@@ -41,7 +41,6 @@ const InviteModel = () => {
       const response = await axios.patch(
         `/api/servers/${server?.id}/invite-code`
       );
-
       onOpen("invite", { server: response.data });
     } catch (err) {
     } finally {
@@ -67,7 +66,7 @@ const InviteModel = () => {
           <div className="flex items-center mt-2 gap-x-2">
             <Input
               className="bg-zinc-300/50 border-0 focus-visible:ring-0
-              focus-visible:ring-offset-0 text-black"
+              focus-visible:ring-offset-0 text-black-600"
               value={inviteUrl}
               disabled={isLoading}
             />

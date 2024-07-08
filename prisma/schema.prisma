@@ -32,7 +32,7 @@ model Server {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String?
-  inviteCode  String
+  inviteCode  String   @unique
   createAt    DateTime @default(now())
   updateAt    DateTime @updatedAt
 
@@ -51,7 +51,7 @@ enum MemberRole {
 // Every Server will have a member & every Member will have a role
 model Member {
   id   String     @id @default(auto()) @map("_id") @db.ObjectId
-  role MemberRole
+  role MemberRole @default(GUEST)
 
   profileId String  @db.ObjectId
   profile   Profile @relation(fields: [profileId], references: [id])
