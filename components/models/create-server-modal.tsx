@@ -1,6 +1,7 @@
 "use client";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import '@/app/globals.css';
 import {
   Dialog,
   DialogContent,
@@ -27,6 +28,7 @@ import { useModal } from "@/hooks/use-modal-store";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "server name is required" }),
+  imageUrl: z.string().min(1, { message: "server image is required" }),
 });
 
 const CreateServerModal = () => {
@@ -38,13 +40,13 @@ const CreateServerModal = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      imageUrl: "",
     },
   });
 
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(form.getValues("name"));
     try {
       await axios.post("/api/servers", values);
       form.reset();
@@ -54,13 +56,12 @@ const CreateServerModal = () => {
   };
 
   const handleClose = () => {
-    console.log("Hello", isOpen);
-    onClose();
     form.reset();
+    onClose();
   };
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={onClose}>
+    <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent className="bg-white text-black p-0 overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-center font-bold text-2xl">
@@ -74,6 +75,22 @@ const CreateServerModal = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-8 px-6">
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <FileUpload
+                        endpoint="serverImage"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="name"
