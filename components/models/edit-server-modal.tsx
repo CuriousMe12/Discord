@@ -28,6 +28,7 @@ import { useModal } from "@/hooks/use-modal-store";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "server name is required" }),
+  imageUrl: z.string().min(1, { message: "server image is required" }),
 });
 
 const EditServerModal = () => {
@@ -41,15 +42,19 @@ const EditServerModal = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      imageUrl: "",
     },
   });
 
+  // console.log(server.imageUrl);
+
   useEffect(() => {
     if (server) {
+      form.setValue("imageUrl", server.imageUrl);
       form.setValue("name", server.name);
     }
   }, [server, form]);
-
+  
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -81,6 +86,23 @@ const EditServerModal = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-8 px-6">
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <FileUpload
+                        endpoint="serverImage"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="name"

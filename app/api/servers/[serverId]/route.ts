@@ -13,7 +13,7 @@ interface Params {
 export async function PATCH(req: Request, { params }: Params) {
   try {
     const { serverId } = params;
-    const { name } = await req.json();
+    const { name, imageUrl } = await req.json();
     const profile = await currentProfile();
 
     if (!profile) {
@@ -27,6 +27,7 @@ export async function PATCH(req: Request, { params }: Params) {
       },
       data: {
         name,
+        imageUrl,
       },
     });
     return NextResponse.json(newServer);
