@@ -36,3 +36,33 @@ export async function PATCH(req: Request, { params }: Params) {
     return new NextResponse("Internal error", { status: 500 });
   }
 }
+
+interface DeleteServerProps {
+  params: { serverId: string };
+}
+
+export async function DELETE(req: Request, { params }: DeleteServerProps) {
+  try {
+    const profile = await currentProfile();
+
+    if (!profile) {
+      return new NextResponse("unAuthorized", { status: 401 });
+    }
+
+    if (!params?.serverId)
+      return new NextResponse("ServerId is required", { status: 401 });
+
+    // db call fro deleting the server in database...
+    await db.server.delete({
+      where: {
+        id: params.serverId,
+        profileId: profile.id,
+      },
+    });
+
+    return new NextResponse("Server deleted successfully!", { status: 200 });
+  } catch (err) {
+    console.error(err);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}

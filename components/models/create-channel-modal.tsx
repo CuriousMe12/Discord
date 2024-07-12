@@ -41,7 +41,12 @@ import { Button } from "../ui/button";
  * 2. Type of channel [TEXT, VIDEO, AUDIO]
  */
 const formSchema = z.object({
-  name: z.string().min(1, { message: "Channel name is required" }),
+  name: z
+    .string()
+    .min(1, { message: "Channel name is required" })
+    .refine((name) => name !== "general", {
+      message: "Channel name can't be 'general'",
+    }),
   type: z.nativeEnum(ChannelType),
 });
 
