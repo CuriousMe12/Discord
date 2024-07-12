@@ -69,14 +69,17 @@ const CreateChannelModal = () => {
           serverId: params?.serverId,
         },
       });
-      await axios.post(Url, values);
-      toast.success("Channel created successfully!");
+
+      const response = axios.post(Url, values);
+      await toast.promise(response, {
+        loading: "Creating channel...",
+        success: "Channel created successfully!",
+        error: "Error creating channel!",
+      });
       form.reset();
       router.refresh();
       onClose();
-    } catch (err) {
-      toast.error(err?.response?.data?.message);
-    }
+    } catch (err) {}
   };
 
   const handleClose = () => {
