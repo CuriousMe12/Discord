@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { cn } from "@/lib/utils";
 import { ModalProvider } from "@/components/providers/modal-provider";
+import { Toaster } from "react-hot-toast";
 
 const inter = Open_Sans({ subsets: ["latin"] });
 
@@ -29,6 +30,13 @@ export default function RootLayout({
             storageKey="discord-private"
           >
             <ModalProvider />
+            <Toaster
+              toastOptions={{
+                className: "ml-[72px]",
+              }}
+              position="bottom-left"
+              reverseOrder={false}
+            />
             {children}
           </ThemeProvider>
         </body>

@@ -1,6 +1,7 @@
 "use client";
 
 import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
+import toast from "react-hot-toast";
 
 interface FileUploadProps {
   onChange: (url?: string) => void;
@@ -33,7 +34,11 @@ const FileUpload = ({ onChange, value, endpoint }: FileUploadProps) => {
       onClientUploadComplete={(res) => {
         // Do something with the response
         onChange(res[0].url);
-        alert("Upload Completed");
+        toast.success("Image Uploaded Successfully!", {
+          style: {
+            fontSize: "20px",
+          },
+        });
       }}
       onUploadError={(error: Error) => {
         // Do something with the error.

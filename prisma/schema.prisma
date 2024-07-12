@@ -9,8 +9,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider     = "mongodb"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 // Profile Model for user
@@ -35,7 +36,7 @@ model Server {
   inviteCode  String   @unique
   createAt    DateTime @default(now())
   updateAt    DateTime @updatedAt
-  imageUrl  String
+  imageUrl    String
 
   profileId String    @db.ObjectId
   Profile   Profile   @relation(fields: [profileId], references: [id])

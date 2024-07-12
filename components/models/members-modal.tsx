@@ -37,6 +37,7 @@ import {
 } from "../ui/dropdown-menu";
 import { MemberRole } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const roleIconMap = {
   GUEST: null,
@@ -64,6 +65,11 @@ const MembersModel = () => {
       });
 
       const response = await axios.patch(url, { role });
+      toast.success("Role Changed Successfully!", {
+        style: {
+          fontSize: "20px",
+        },
+      });
       router.refresh();
       onOpen("members", { server: response.data });
     } catch (err) {
@@ -83,6 +89,11 @@ const MembersModel = () => {
       });
 
       const response = await axios.delete(url);
+      toast.success("Member Kicked Successfully!", {
+        style: {
+          fontSize: "20px",
+        },
+      });
       router.refresh();
       onOpen("members", { server: response.data });
       setLoadingId(memberId);

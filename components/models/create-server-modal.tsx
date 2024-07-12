@@ -1,7 +1,7 @@
 "use client";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import '@/app/globals.css';
+import "@/app/globals.css";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +25,7 @@ import FileUpload from "../FileUpload";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "server name is required" }),
@@ -49,6 +50,11 @@ const CreateServerModal = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await axios.post("/api/servers", values);
+      toast.success("Server created successfully!", {
+        style: {
+          fontSize: "20px",
+        },
+      });
       form.reset();
       router.refresh();
       onClose();

@@ -25,6 +25,7 @@ import FileUpload from "../FileUpload";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "server name is required" }),
@@ -54,12 +55,13 @@ const EditServerModal = () => {
       form.setValue("name", server.name);
     }
   }, [server, form]);
-  
+
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await axios.patch(`/api/servers/${server.id}`, values);
+      toast.success("Server edited successfully!");
       form.reset();
       router.refresh();
       onClose();
