@@ -22,7 +22,7 @@ export async function POST(req: Request) {
         imageUrl: imageUrl,
         channel: {
           create: {
-            name: "General",
+            name: "general",
             profileId: profile.id,
             type: ChannelType.TEXT,
           },

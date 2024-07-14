@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { useEffect } from "react";
 
 /*
  * Schema to Validate
@@ -51,8 +52,9 @@ const formSchema = z.object({
 });
 
 const CreateChannelModal = () => {
-  const { isOpen, type, onClose } = useModal();
+  const { isOpen, type, onClose, data } = useModal();
   const params = useParams();
+  const channelType = data?.channelType;
   const isModalOpen = isOpen && type === "createChannel";
 
   const router = useRouter();
@@ -60,9 +62,14 @@ const CreateChannelModal = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      type: ChannelType.TEXT,
+      type: channelType || ChannelType.TEXT,
     },
   });
+
+  useEffect(() => {
+    if (channelType) form.setValue("type", channelType);
+    else form.setValue("type", ChannelType.TEXT);
+  }, [channelType, form]);
 
   const isLoading = form.formState.isSubmitting;
 
