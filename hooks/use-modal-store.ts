@@ -9,7 +9,8 @@ export type ModalType =
   | "members"
   | "invite"
   | "editServer"
-  | "deleteChannel";
+  | "deleteChannel"
+  | "editChannel";
 
 interface ModelData {
   server?: Server;

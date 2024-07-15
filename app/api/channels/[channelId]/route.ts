@@ -19,12 +19,56 @@ export async function DELETE(req: NextRequest, { params }: DeleteChannelProps) {
     await db.channel.delete({
       where: {
         id: params.channelId,
+        name: {
+          not: "general",
+        },
       },
     });
 
     return NextResponse.json({
       status: "success",
       message: "Channel deleted successfully!",
+    });
+  } catch (err) {
+    console.log(err);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}
+
+export async function PATCH(
+  req: NextResponse,
+  { params }: { params: { channelId: string } }
+) {
+  try {
+    const profile = await currentProfile();
+    const { name, type } = await req.json();
+
+    if (!profile)
+      return new NextResponse("unAuthorized access", { status: 400 });
+
+    if (!params.channelId)
+      return new NextResponse("Channel Id is required", { status: 401 });
+
+    if (!name || !type)
+      return new NextResponse("name or type is missing", { status: 401 });
+
+    const newChannel = await db.channel.update({
+      where: {
+        id: params.channelId,
+        name: {
+          not: "general",
+        },
+      },
+      data: {
+        name,
+        type,
+      },
+    });
+
+    return NextResponse.json({
+      status: "success",
+      message: "Channel edited successfully!",
+      data: newChannel,
     });
   } catch (err) {
     console.log(err);
