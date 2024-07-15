@@ -5,25 +5,42 @@ import { useParams, useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { ActionTooltip } from "../action-tooltip";
-import AvatarIcon from "@/assets/AvatarIcon.jpg";
+import { Channel } from "diagnostics_channel";
+import { useEffect, useRef } from "react";
 
 interface NavigationItemProps {
   id: string;
   name: string;
   imageUrl: string;
+  channel: Channel;
+  position: number;
 }
 
-export const NavigationItem = ({ id, name, imageUrl }: NavigationItemProps) => {
+export const NavigationItem = ({
+  id,
+  name,
+  imageUrl,
+  channel,
+  position,
+}: NavigationItemProps) => {
   const params = useParams();
   const router = useRouter();
+  const btnRef = useRef();
 
-  const handleClick = () => {
-    router.push(`/servers/${id}`);
+  const handleClick = async () => {
+    router.push(`/servers/${id}/channels/${channel?.id}`);
   };
+
+  useEffect(() => {
+    if (position === 1 && btnRef.current) {
+      btnRef.current.click();
+    }
+  }, []);
 
   return (
     <ActionTooltip side="right" align="center" label={name}>
       <button
+        ref={btnRef}
         onClick={handleClick}
         className="group relative flex items-center"
       >

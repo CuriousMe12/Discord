@@ -21,6 +21,13 @@ export const NavigationSidebar = async () => {
         },
       },
     },
+    include: {
+      channel: {
+        where: {
+          name: "general",
+        },
+      },
+    },
   });
 
   return (
@@ -32,13 +39,15 @@ export const NavigationSidebar = async () => {
         rounded-md w-10 mx-auto mt-4 mb-4"
         />
         <ScrollArea>
-          {server.map((server) => {
+          {server.map((server, index) => {
             return (
               <div className="mb-4" key={server.id}>
                 <NavigationItem
                   id={server.id}
                   name={server.name}
                   imageUrl={server.imageUrl}
+                  channel={server.channel[0]}
+                  position={index + 1}
                 />
               </div>
             );
