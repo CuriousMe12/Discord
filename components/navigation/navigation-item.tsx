@@ -31,16 +31,9 @@ export const NavigationItem = ({
     router.push(`/servers/${id}/channels/${channel?.id}`);
   };
 
-  useEffect(() => {
-    if (position === 1 && btnRef.current) {
-      btnRef.current.click();
-    }
-  }, []);
-
   return (
     <ActionTooltip side="right" align="center" label={name}>
       <button
-        ref={btnRef}
         onClick={handleClick}
         className="group relative flex items-center"
       >
