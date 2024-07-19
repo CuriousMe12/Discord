@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { cn } from "@/lib/utils";
 import { ModalProvider } from "@/components/providers/modal-provider";
 import { Toaster } from "react-hot-toast";
+import { SocketProvider } from "@/components/providers/socket-provider";
 
 const inter = Open_Sans({ subsets: ["latin"] });
 
@@ -29,15 +30,17 @@ export default function RootLayout({
             enableSystem={false}
             storageKey="discord-private"
           >
-            <ModalProvider />
-            <Toaster
-              toastOptions={{
-                className: "ml-[72px]",
-              }}
-              position="bottom-left"
-              reverseOrder={false}
-            />
-            {children}
+            <SocketProvider>
+              <ModalProvider />
+              <Toaster
+                toastOptions={{
+                  className: "ml-[72px]",
+                }}
+                position="bottom-left"
+                reverseOrder={false}
+              />
+              {children}
+            </SocketProvider>
           </ThemeProvider>
         </body>
       </html>
