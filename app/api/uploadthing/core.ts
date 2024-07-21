@@ -16,7 +16,7 @@ export const ourFileRouter = {
   })
     .middleware(() => {
       console.log("Me too");
-      
+
       return handleAuth();
     })
     .onUploadComplete(async ({ metadata, file }) => {
@@ -26,6 +26,10 @@ export const ourFileRouter = {
 
       return { uploadedBy: metadata.userId };
     }),
+
+  messageFile: f(["image", "pdf"])
+    .middleware(() => handleAuth())
+    .onUploadComplete(() => {}),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
