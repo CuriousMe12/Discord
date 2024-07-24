@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { ModalProvider } from "@/components/providers/modal-provider";
 import { Toaster } from "react-hot-toast";
 import { SocketProvider } from "@/components/providers/socket-provider";
+import { QueryProvider } from "@/components/providers/query-provider";
 
 const inter = Open_Sans({ subsets: ["latin"] });
 
@@ -32,14 +33,16 @@ export default function RootLayout({
           >
             <SocketProvider>
               <ModalProvider />
-              <Toaster
-                toastOptions={{
-                  className: "ml-[72px]",
-                }}
-                position="bottom-left"
-                reverseOrder={false}
-              />
-              {children}
+              <QueryProvider>
+                <Toaster
+                  toastOptions={{
+                    className: "ml-[72px]",
+                  }}
+                  position="bottom-left"
+                  reverseOrder={false}
+                />
+                {children}
+              </QueryProvider>
             </SocketProvider>
           </ThemeProvider>
         </body>
