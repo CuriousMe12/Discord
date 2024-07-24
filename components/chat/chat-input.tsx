@@ -45,7 +45,6 @@ const ChatInput = ({ apiUrl, query, name, type }: ChatInputProps) => {
       const response = await axios.post(url, value);
       form.reset();
       router.refresh();
-      console.log(response);
     } catch (err) {
     } finally {
     }
