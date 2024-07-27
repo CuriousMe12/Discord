@@ -4,7 +4,7 @@ import { Message } from "@prisma/client";
 import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
 
-const MESSAGE_BATCH = 30;
+const MESSAGE_BATCH = 10;
 
 export async function GET(req: Request) {
   try {

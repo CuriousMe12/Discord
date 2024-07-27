@@ -2,12 +2,14 @@
 
 import { useChatQuery } from "@/hooks/use-chat-hook";
 import ChatWelcome from "./chat-welcome";
-import { Loader2, ServerCrash } from "lucide-react";
-import { Fragment } from "react";
+import { CircleChevronDown, Loader2, ServerCrash } from "lucide-react";
+import { ElementRef, Fragment, useEffect, useRef } from "react";
 import { Member, Message, Profile } from "@prisma/client";
 import ChatItem from "./chat-item";
 import { format } from "date-fns";
 import { useChatSocket } from "@/hooks/use-chat-socket-hook";
+import { useChatScroll } from "@/hooks/use-chat-scroll";
+import { ActionTooltip } from "../action-tooltip";
 
 interface ChatMessagesProps {
   name: string;
@@ -41,6 +43,9 @@ const ChatMessages = ({
   const queryKey = `chat:${chatId}`;
   const addKey = `chat:${chatId}:messages`;
   const updateKey = `chat:${chatId}:messages:update`;
+  const chatRef = useRef<ElementRef<"div">>(null);
+  const bottomRef = useRef<ElementRef<"div">>(null);
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useChatQuery({
       queryKey,
@@ -55,9 +60,24 @@ const ChatMessages = ({
     updateKey,
   });
 
+  const [atBottom, oldHeight] = useChatScroll({
+    chatRef,
+    bottomRef,
+    loadMore: fetchNextPage,
+    shouldLoadMore: !!hasNextPage,
+    count: data?.pages?.[0]?.items?.length,
+  });
+
+  useEffect(() => {
+    if (!chatRef.current) return;
+    const newHeight = chatRef.current.scrollHeight;
+    const newTop = newHeight - oldHeight;
+    chatRef.current.scrollTop = newTop;
+  }, [chatRef, data]);
+
   if (status !== "error" && status !== "success") {
     return (
-      <div className="flex flex-col flex-1 justify-center">
+      <div className="flex flex-col flex-1 justify-center items-center">
         <Loader2 className="h-7 w-7 text-zinc-500 animate-spin my-4" />
         <p className="text-xs text-zinc-500 dark:text-zinc-400">
           Loading messages...
@@ -77,10 +97,33 @@ const ChatMessages = ({
     );
   }
 
+  const handleScrollBottom = () => {
+    bottomRef?.current?.scrollIntoView();
+  };
+
   return (
-    <div className="flex-1 flex flex-col py-4 overflow-y-auto">
-      <div className="flex-1" />
-      <ChatWelcome name={name} type={type} />
+    <div ref={chatRef} className="flex-1 flex flex-col py-4 overflow-y-auto">
+      {!hasNextPage && <div className="flex-1" />}
+      {!hasNextPage && <ChatWelcome name={name} type={type} />}
+      {hasNextPage && (
+        <div className="flex justify-center">
+          {isFetchingNextPage ? (
+            <Loader2 className="h-10 w-10 text-zinc-500 animate-spin my-4" />
+          ) : (
+            ""
+          )}
+        </div>
+      )}
+      {!atBottom && (
+        <ActionTooltip label="Go to bottom">
+          <CircleChevronDown
+            onClick={handleScrollBottom}
+            className="w-7 h-7 absolute bottom-20 right-8 z-50 cursor-pointer text-zinc-500 hover:text-zinc-800
+        dark:hover:text-zinc-100 transition
+       dark:text-zinc-400  rounded-full"
+          />
+        </ActionTooltip>
+      )}
       <div className="flex flex-col-reverse mt-auto">
         {data?.pages?.map((group, i) => (
           <Fragment key={i}>
@@ -102,6 +145,7 @@ const ChatMessages = ({
           </Fragment>
         ))}
       </div>
+      <div ref={bottomRef} />
     </div>
   );
 };
