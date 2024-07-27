@@ -72,8 +72,8 @@ const ChatMessages = ({
     if (!chatRef.current) return;
     const newHeight = chatRef.current.scrollHeight;
     const newTop = newHeight - oldHeight;
-    chatRef.current.scrollTop = newTop;
-  }, [chatRef, data]);
+    if (hasNextPage) chatRef.current.scrollTop = newTop;
+  }, [oldHeight, data]);
 
   if (status !== "error" && status !== "success") {
     return (
