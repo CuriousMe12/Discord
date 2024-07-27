@@ -17,6 +17,7 @@ import { Input } from "../ui/input";
 import qs from "query-string";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useModal } from "@/hooks/use-modal-store";
 
 interface ChatItemProps {
   id: string;
@@ -63,6 +64,7 @@ export default function ChatItem({
       content: "",
     },
   });
+  const { onOpen } = useModal();
 
   const fileType = fileUrl?.split(".").pop();
   const isAdmin = currentMember.role === MemberRole.ADMIN;
@@ -103,18 +105,6 @@ export default function ChatItem({
       });
       const response = await axios.patch(url, values);
       setIsEditing(false);
-      form.reset();
-      router.refresh();
-    } catch (err) {}
-  };
-
-  const onDelete = async () => {
-    try {
-      const url = qs.stringifyUrl({
-        url: `${socketUrl}/${id}`,
-        query: { ...socketQuery },
-      });
-      const response = await axios.delete(url);
       form.reset();
       router.refresh();
     } catch (err) {}
@@ -242,7 +232,12 @@ export default function ChatItem({
               )}
               <ActionTooltip label="Delete">
                 <Trash
-                  onClick={onDelete}
+                  onClick={() =>
+                    onOpen("deleteMessage", {
+                      apiUrl: `${socketUrl}/${id}`,
+                      query: socketQuery,
+                    })
+                  }
                   className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600
                    dark:hover:text-zinc-100 transition"
                 />
