@@ -7,6 +7,7 @@ import { Fragment } from "react";
 import { Member, Message, Profile } from "@prisma/client";
 import ChatItem from "./chat-item";
 import { format } from "date-fns";
+import { useChatSocket } from "@/hooks/use-chat-socket-hook";
 
 interface ChatMessagesProps {
   name: string;
@@ -38,6 +39,8 @@ const ChatMessages = ({
   type,
 }: ChatMessagesProps) => {
   const queryKey = `chat:${chatId}`;
+  const addKey = `chat:${chatId}:messages`;
+  const updateKey = `chat:${chatId}:messages:update`;
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useChatQuery({
       queryKey,
@@ -45,6 +48,12 @@ const ChatMessages = ({
       paramKey,
       paramValue,
     });
+
+  useChatSocket({
+    queryKey,
+    addKey,
+    updateKey,
+  });
 
   if (status !== "error" && status !== "success") {
     return (
