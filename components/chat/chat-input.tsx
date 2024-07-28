@@ -7,11 +7,12 @@ import qs from "query-string";
 
 import { Form, FormField, FormItem, FormControl } from "../ui/form";
 import { Input } from "../ui/input";
-import { Plus } from "lucide-react";
+import { Plus, SendHorizontal } from "lucide-react";
 import axios from "axios";
 import { useModal } from "@/hooks/use-modal-store";
 import EmojiPicker from "../emoji-picker";
 import { useRouter } from "next/navigation";
+import { ActionTooltip } from "../action-tooltip";
 
 interface ChatInputProps {
   apiUrl: string;
@@ -68,7 +69,9 @@ const ChatInput = ({ apiUrl, query, name, type }: ChatInputProps) => {
                      hover:bg-zinc-600 dark:hover:bg-zinc-300 transition rounded-full p-1 flex 
                      items-center justify-center cursor-pointer"
                   >
-                    <Plus className="text-white dark:text-[#313338]" />
+                    <ActionTooltip label="Send File">
+                      <Plus className="text-white dark:text-[#313338]" />
+                    </ActionTooltip>
                   </button>
                   <Input
                     disabled={isLoading}
@@ -79,12 +82,22 @@ const ChatInput = ({ apiUrl, query, name, type }: ChatInputProps) => {
                     className="px-14 py-6 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0
                   focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
                   />
-                  <div className="absolute right-8 top-7 cursor-pointer">
-                    <EmojiPicker
-                      onChange={(emoji: any) =>
-                        field.onChange(`${field.value} ${emoji}`)
-                      }
-                    />
+                  <div className="flex gap-x-5 absolute right-8 top-7 cursor-pointer">
+                    <ActionTooltip label="Emoji Picker">
+                      <EmojiPicker
+                        onChange={(emoji: any) =>
+                          field.onChange(`${field.value} ${emoji}`)
+                        }
+                      />
+                    </ActionTooltip>
+
+                    {form.getValues("content") && (
+                      <button role="button" type="submit">
+                        <ActionTooltip label="Send Message">
+                          <SendHorizontal className="text-indigo-500 dark:text-indigo-400" />
+                        </ActionTooltip>
+                      </button>
+                    )}
                   </div>
                 </div>
               </FormControl>

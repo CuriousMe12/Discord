@@ -68,6 +68,14 @@ const ChatMessages = ({
     count: data?.pages?.[0]?.items?.length,
   });
 
+  const handleScrollBottom = () => {
+    bottomRef?.current?.scrollIntoView();
+  };
+
+  useEffect(() => {
+    handleScrollBottom();
+  }, [bottomRef, chatId]);
+
   useEffect(() => {
     if (!chatRef.current) return;
     const newHeight = chatRef.current.scrollHeight;
@@ -96,10 +104,6 @@ const ChatMessages = ({
       </div>
     );
   }
-
-  const handleScrollBottom = () => {
-    bottomRef?.current?.scrollIntoView();
-  };
 
   return (
     <div ref={chatRef} className="flex-1 flex flex-col py-4 overflow-y-auto">
