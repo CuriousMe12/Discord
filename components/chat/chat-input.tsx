@@ -92,7 +92,7 @@ const ChatInput = ({ apiUrl, query, name, type }: ChatInputProps) => {
                     </ActionTooltip>
 
                     {form.getValues("content") && (
-                      <button role="button" type="submit">
+                      <button title="" role="button" type="submit">
                         <ActionTooltip label="Send Message">
                           <SendHorizontal className="text-indigo-500 dark:text-indigo-400" />
                         </ActionTooltip>
