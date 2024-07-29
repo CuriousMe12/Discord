@@ -1,5 +1,5 @@
-const ServerHome = ({ serverId }: { serverId: string }) => {
-  return <h1>Hello {serverId}</h1>;
+const ServerHome = () => {
+  return <h1>Hello</h1>;
 };
 
 export default ServerHome;
